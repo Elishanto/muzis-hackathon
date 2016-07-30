@@ -1,1 +1,6 @@
 telegram_token: 247375230:AAGQq649NosnXkcyIgOiJ_EKpsSPYm3NBew
+start_message: |
+  Привет! Используй клавиатуру ниже, чтобы вызывать команды.
+  /create – создать плейлист
+  /history – посмотреть, что слушал раньше
+  /help – если нужна помощь
