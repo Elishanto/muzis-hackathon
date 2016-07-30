@@ -1,6 +1,7 @@
 import urllib.request
 import pydub
 import os
+from muzisapi.api import stream_from_values
 
 audio_url = 'http://f.muzis.ru/{name}'
 
@@ -27,4 +28,8 @@ def concatenate_audio(songs_list, params=None):
     return playlist
 
 
-
+def generate_audio(db, user_id):
+    playlist = dict(db.playlists.find_one({'name': db.current.find_one({'user_id': user_id})['name']}))
+    values = [playlist.pop('g', None), playlist.pop('e', None), playlist.pop('t', None)]
+    values = {'values': ','.join(['{}:200'.format(x) for x in values if x])}
+    return stream_from_values(values)
