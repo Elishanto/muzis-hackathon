@@ -1,4 +1,5 @@
 import yaml
+import os
 
 from pymongo import MongoClient
 from telegram.ext import Updater, CommandHandler
@@ -8,7 +9,9 @@ from handlers import Handlers
 
 def main():
     config = yaml.load(open('config.yml'))
-    updater = Updater(config['telegram_token'])
+    updater = Updater(
+        config['telegram_token'] if not os.environ.get('telegram_token') else os.environ.get('telegram_token')
+    )
 
     dp = updater.dispatcher
 
