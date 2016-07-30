@@ -6,6 +6,14 @@ audio_url = 'http://f.muzis.ru/{name}'
 
 
 def concatenate_audio(songs_list, params=None):
+    # TODO: добавить параметры слкеивания
+    """
+    Склеиваем треки в один большой
+    :param songs_list: [<Song>, ...]
+    :type songs_list: list[<Song>]
+    :return: concatenated audio
+    :rtype: pydub.AudioSegment
+    """
     song_names = [song['file_mp3'] for song in songs_list]
     sounds = []
     for file_name in song_names:
