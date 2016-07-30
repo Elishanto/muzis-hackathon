@@ -16,10 +16,9 @@ class Handlers:
             name = str(self.db.playlists.count() + 1)
 
         buttons = [
-            [
-                InlineKeyboardButton(text='Длительность плейлиста'),
-                InlineKeyboardButton(text='Жанры'),
-                InlineKeyboardButton(text='Музыкальная эпоха')
-            ]
+            [InlineKeyboardButton(text='Длительность плейлиста', callback_data='0')],
+            [InlineKeyboardButton(text='Жанры', callback_data='1')],
+            [InlineKeyboardButton(text='Музыкальная эпоха', callback_data='2')]
         ]
-        return bot.sendMessage(update.message.from_user.id, text=name, reply_markup=InlineKeyboardMarkup(buttons))
+        return bot.sendMessage(update.message.from_user.id, text='Playlist "{}"'.format(name),
+                               reply_markup=InlineKeyboardMarkup(buttons))
