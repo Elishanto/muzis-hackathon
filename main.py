@@ -1,5 +1,7 @@
-from telegram.ext import Updater, CommandHandler
 import yaml
+
+from pymongo import MongoClient
+from telegram.ext import Updater, CommandHandler
 
 from handlers import Handlers
 
@@ -10,9 +12,10 @@ def main():
 
     dp = updater.dispatcher
 
-    handlers = Handlers()
+    handlers = Handlers(MongoClient())
 
     dp.add_handler(CommandHandler('start', handlers.start_handler))
+    dp.add_handler(CommandHandler('create', handlers.create_handler, pass_args=True))
 
     updater.start_polling()
     updater.idle()
