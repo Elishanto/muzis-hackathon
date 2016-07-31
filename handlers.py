@@ -70,7 +70,7 @@ class Handlers:
             text = '\n\n'.join([
                                    '\n'.join(['*{}*'.format(x['performer']), x['track_name']]) for x in res
                                    ])
-            text += '\n\n' + '_Download_: [{}]({})'.format(name, audio_url)
+            text += '\n\n' + '[Download "{}"]({})'.format(name, audio_url)
             return bot.editMessageText(chat_id=query.message.chat.id,
                                        message_id=message_id,
                                        text=text,
