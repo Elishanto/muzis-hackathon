@@ -43,21 +43,22 @@ class Handlers:
         data = query.data
         name = self.db.current.find_one({'user_id': query.from_user.id})['name']
         bot.answer_callback_query(query.id)
+        message_id = self.db.users.find_one({'user_id': query.message.chat.id})['message_id']
         if data == 's':
-            playlist = generate_audio(self.db, query.from_user.id)[
-                       :self.db.playlists.find_one({'name': name})['l'] if
-                       self.db.playlists.find_one({'name': name})['l'] else 10
-                       ]
+            bot.editMessageText(chat_id=query.message.chat.id,
+                                message_id=message_id,
+                                text='Составляю плейлист...')
+            playlist = generate_audio(self.db, query.from_user.id)
+            text = '\n'.join(['{} - {}'.format(x['performer'], x['track_name']) for x in playlist[0]])
+            text += '\n' + playlist[1]
             return bot.editMessageText(chat_id=query.message.chat.id,
-                                       message_id=self.db.users.find_one({'user_id': query.message.chat.id})
-                                       ['message_id'],
-                                       text='\n'.join(['{} - {}'.format(x['performer'], x['track_name']) for x in playlist]))
+                                       message_id=message_id,
+                                       text=text)
         if len(data.split('|')) > 1:
             data = data.split('|')
             self.db.playlists.update_one({'name': name}, {'$set': {data[0]: self.config['buttons'][data[0]][data[1]]}})
             return bot.editMessageText(chat_id=query.message.chat.id,
-                                       message_id=self.db.users.find_one({'user_id': query.message.chat.id})
-                                       ['message_id'],
+                                       message_id=message_id,
                                        text='Playlist "{}"'.format(name),
                                        reply_markup=InlineKeyboardMarkup(BUTTONS))
         else:
@@ -66,7 +67,6 @@ class Handlers:
             buttons = [[InlineKeyboardButton(text=x, callback_data='{}|{}'.format(data, x))]
                        for x in buttons]
             return bot.editMessageText(chat_id=query.message.chat.id,
-                                       message_id=self.db.users.find_one({'user_id': query.message.chat.id})
-                                       ['message_id'],
+                                       message_id=message_id,
                                        text='Playlist "{}"'.format(name),
                                        reply_markup=InlineKeyboardMarkup(buttons))
