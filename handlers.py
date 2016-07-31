@@ -21,9 +21,8 @@ class Handlers:
             name = ' '.join(args)
         else:
             name = str(self.db.playlists.count() + 1)
-
-        if self.db.playlists.find({'name': name}).count() > 0:
-            name = '{} #{}'.format(self.get_plst_name().format(name), self.db.playlists.count({'name': name}) + 1)
+        name = '{} #{}'.format(self.get_plst_name().format(name), self.db.playlists.count({'name': name}) + 1)
+        print(name)
 
         self.db.playlists.insert_one({'name': name, 'user_id': update.message.from_user.id})
         self.db.current.update_one({'user_id': update.message.from_user.id},
@@ -32,7 +31,7 @@ class Handlers:
 
         message = bot.sendMessage(
             update.message.from_user.id,
-            text=self.get_plst_name().format(name, get_playlist_params(self, name)),
+            text=self.get_plst_name().format(name) + get_playlist_params(self, name),
             reply_markup=InlineKeyboardMarkup(self.BUTTONS),
             parse_mode='markdown')
         self.db.users.update_one(
