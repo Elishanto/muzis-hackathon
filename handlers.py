@@ -79,28 +79,17 @@ class Handlers:
                                        parse_mode='markdown')
         else:
             buttons = self.config['buttons'][data]
-            if data == 'l':
-                song_words = [k.split(' ')[1] for k in buttons.keys()]
-                buttons = sorted(int(x.split(' ')[0]) for x in buttons.keys())
-                buttons = [[
-                               InlineKeyboardButton(
-                                   text=' '.join([str(x), word]),
-                                   callback_data='{}|{}'.format(data, ' '.join([str(x), word])))
-                           ]
-                           for x, word in zip(buttons, song_words)
-                           ]
-
-            elif data == 'e':
-                buttons = sorted([int(ep.split('-')[0]) for ep in buttons.keys()])
-                buttons = [[
-                               InlineKeyboardButton(
-                                   text=str(x) + '-e',
-                                   callback_data='{}|{}'.format(data, str(x) + '-e'))
-                           ]
-                           for x in buttons]
-            else:
-                buttons = sorted(buttons.keys())
-                buttons = [[InlineKeyboardButton(text=x, callback_data='{}|{}'.format(data, x))]
+            # if data == 'e':
+            #      buttons = [str(y) + '-e' for y in sorted([int(ep.split('-')[0]) for ep in buttons.keys()])]
+            #      buttons = [[
+            #                     InlineKeyboardButton(
+            #                         text=x,
+            #                         callback_data='{}|{}'.format(data, x))
+            #                 ]
+            #                 for x in buttons]
+            # else:
+            buttons = sorted(buttons.keys())
+            buttons = [[InlineKeyboardButton(text=x, callback_data='{}|{}'.format(data, x))]
                            for x in buttons]
             return bot.editMessageText(chat_id=query.message.chat.id,
                                        message_id=message_id,

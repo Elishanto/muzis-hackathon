@@ -33,9 +33,9 @@ def generate_audio(db, user_id):
 
     playlist = dict(db.playlists.find_one({'name': name}))
     values = [playlist.pop('g', None), playlist.pop('e', None), playlist.pop('t', None)]
-    values = {'values': ','.join(['{}:200'.format(x) for x in values if x])}
+    values = {'values': ','.join(['{}:50'.format(x) for x in values if x])}
 
-    res = stream_from_values(values)[:playlist['l'] if 'l' in playlist else 10]
+    res = stream_from_values(values)[:playlist['l'] if 'l' in playlist else 5]
 
     try:
         os.mkdir('files')
