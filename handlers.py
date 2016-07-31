@@ -22,7 +22,6 @@ class Handlers:
         else:
             name = str(self.db.playlists.count() + 1)
         name = '{} #{}'.format(self.get_plst_name().format(name), self.db.playlists.count({'name': name}) + 1)
-        print(name)
 
         self.db.playlists.insert_one({'name': name, 'user_id': update.message.from_user.id})
         self.db.current.update_one({'user_id': update.message.from_user.id},
