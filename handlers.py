@@ -41,6 +41,20 @@ class Handlers:
             upsert=True
         )
 
+    def history_handler(self, bot, update, args):
+        if args[0] == '':
+            _args = [5]
+        else:
+            _args = args
+        history = self.db.playlists.find({'user_id': update.message.from_user.id}).limit(int(_args[0]))
+        text = ''
+        for plst in history:
+            text += self.get_plst_name().format(plst['name']) + get_playlist_params(self, plst['name']) + '\n\n'
+            print(text)
+        return bot.sendMessage(update.message.from_user.id,
+                               text=text,
+                               parse_mode='markdown')
+
     def help_handler(self, bot, update):
         return bot.sendMessage(update.message.from_user.id, text=self.config['help_message'])
 
