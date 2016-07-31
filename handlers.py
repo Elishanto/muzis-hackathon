@@ -71,10 +71,14 @@ class Handlers:
                                    '\n'.join(['*{}*'.format(x['performer']), x['track_name']]) for x in res
                                    ])
             text += '\n\n' + '[Download "{}"]({})'.format(name, audio_url)
-            return bot.editMessageText(chat_id=query.message.chat.id,
-                                       message_id=message_id,
-                                       text=text,
-                                       parse_mode='markdown')
+            bot.editMessageText(chat_id=query.message.chat.id,
+                                message_id=message_id,
+                                text=text,
+                                parse_mode='markdown')
+            return bot.sendAudio(chat_id=query.message.chat.id,
+                          text=text,
+                          parse_mode='markdown',
+                          audio=audio_url)
         if len(data.split('|')) > 1:
             data = data.split('|')
             to_set = self.config['buttons'][data[0]][data[1]]
@@ -99,7 +103,7 @@ class Handlers:
             # else:
             buttons = sorted(buttons.keys())
             buttons = [[InlineKeyboardButton(text=x, callback_data='{}|{}'.format(data, x))]
-                           for x in buttons]
+                       for x in buttons]
             return bot.editMessageText(chat_id=query.message.chat.id,
                                        message_id=message_id,
                                        text=self.get_plst_name().format(name) + get_playlist_params(self, name),
