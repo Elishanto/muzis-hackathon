@@ -1,13 +1,16 @@
 import os
 import pwd
 import grp
+from multiprocessing.pool import Pool
 
 from jinja2 import Environment, FileSystemLoader
 from mpd import MPDClient
 from random import randint
-from time import sleep
+from utils.api_utils import audio_url
 from urllib.request import urlretrieve
 from subprocess import call, Popen
+
+from main import logger
 
 PARTY_HOME = "/parties"
 TEMPLATES_PATH = "./config_templates"
@@ -16,11 +19,13 @@ PARTY_HOST = "139.59.212.18"
 ICECAST_PASS = 123
 ICECAST_ORIG_PATH = "/etc/icecast2/"
 
-class Party:
+class Stream:
 
-    def __init__(self, party_id, logger, songs):
-        self.party_id = party_id
-        self.songs = songs
+    active_streams = {}
+
+    def __init__(self, playlist_id, song_urls):
+        self.party_id = playlist_id
+        self.song_urls = song_urls
         self.icecast2_port = randint(9100, 9500)
         self.party_port = self.icecast2_port + 10000
 
@@ -30,18 +35,28 @@ class Party:
         self.__mk_icecast_xml()
         self.__mk_mpd_config()
 
-        for s in songs:
-            logger.info('Downloading song: ' % s)
-            urlretrieve(s, os.path.join(self.music_dir, "test.mp3"))
-
         self.icecast_proc = Popen("icecast2 -b -c " + os.path.join(self.party_path, "icecast.xml"), shell = True)
         self.mpd_proc = Popen("mpd " + os.path.join(self.party_path, "mpd.conf"), shell = True)
 
-        sleep(5)
         self.client = MPDClient()
         self.client.connect(PARTY_HOST, self.party_port)
-        self.client.rescan()
 
+        Stream.active_streams[self.get_stream_id()] = self
+
+    def get_stream_id(self):
+        return self.party_id
+
+    @staticmethod
+    def download(song_id):
+        logger.info('Downloading song: ' % song_id)
+        urlretrieve(audio_url.format(name=song_id), filename=song_id)
+
+    def cache_songs(self):
+        # TODO: entrire memory of the script will be copied into each process! consider using threads
+        with Pool(4) as p:
+            p.map(Stream.download, self.song_urls)
+
+        self.client.rescan()
         logger.info('Party "%s" initiated at port %s' % (self.party_id, self.icecast2_port))
 
     def __mk_party_dirs(self):
@@ -105,7 +120,7 @@ class Party:
             mpd_file.write(mpd_conf)
 
     def get_stream_url(self):
-        return "http://%s:%s/%s" % (PARTY_HOST, self.party_port, self.party_id)
+        return "http://%s:%s/%s" % (PARTY_HOST, self.icecast2_port, self.party_id)
 
     def start(self):
         self.client.play()
@@ -118,4 +133,4 @@ class Party:
         self.mpd_proc.kill()
 
 if __name__ == "__main__":
-    test_party = Party("userVasya_party23", ["http://www.stephaniequinn.com/Music/Vivaldi%20-%20Spring%20from%20Four%20Seasons.mp3"])
+    test_party = Stream("userVasya_party23", ["http://www.stephaniequinn.com/Music/Vivaldi%20-%20Spring%20from%20Four%20Seasons.mp3"])

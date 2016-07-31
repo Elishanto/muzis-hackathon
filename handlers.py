@@ -1,5 +1,5 @@
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
-from utils.api_utils import generate_audio
+from utils.api_utils import generate_audio, generate_stream
 from utils.handlers_utils import get_playlist_params
 
 
@@ -55,12 +55,16 @@ class Handlers:
                 message_id=message_id,
                 text='Составляю плейлист... \n{}'.format(get_playlist_params(self, name)),
                 parse_mode='markdown')
-            res, audio_url = generate_audio(self.db, query.from_user.id)
 
-            text = '\n\n'.join([
-                '\n'.join(['*{}*'.format(x['performer']), x['track_name']]) for x in res
-            ])
-            text += '\n\n' + '_Download_: ' + audio_url
+            # res, audio_url = generate_audio(self.db, query.from_user.id)
+
+            stream_url = generate_stream(self.db, query.from_user.id)
+
+            # text = '\n\n'.join([
+            #     '\n'.join(['*{}*'.format(x['performer']), x['track_name']]) for x in res
+            # ])
+            # text += '\n\n' + '_Download_: ' + audio_url
+            text = '\n\n' + '_Listen_right_now_: ' + stream_url
             return bot.editMessageText(chat_id=query.message.chat.id,
                                        message_id=message_id,
                                        text=text,
