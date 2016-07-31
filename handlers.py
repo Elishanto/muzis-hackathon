@@ -32,7 +32,7 @@ class Handlers:
 
         message = bot.sendMessage(
             update.message.from_user.id,
-            text=self.get_plst_name().format(name, get_playlist_params(self, name)),
+            text=self.get_plst_name().format(name) + get_playlist_params(self, name),
             reply_markup=InlineKeyboardMarkup(self.BUTTONS),
             parse_mode='markdown')
         self.db.users.update_one(
