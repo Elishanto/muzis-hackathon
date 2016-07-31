@@ -1,0 +1,47 @@
+<icecast>
+    <limits>
+        <clients>50</clients>
+        <sources>2</sources>
+        <threadpool>5</threadpool>
+        <queue-size>524288</queue-size>
+        <client-timeout>30</client-timeout>
+        <header-timeout>15</header-timeout>
+        <source-timeout>10</source-timeout>
+        <burst-on-connect>1</burst-on-connect>
+        <burst-size>65535</burst-size>
+    </limits>
+	<authentication>
+		<source-password>{{ icecast_pass }}</source-password>
+		<relay-password>{{ icecast_pass }}_relay</relay-password>
+		<admin-user>admin</admin-user>
+		<admin-password>admin_{{ icecast_pass }}</admin-password>
+	</authentication>
+	<hostname>139.59.212.18</hostname>
+	<listen-socket>
+		<port>{{ icecast_port }}</port>
+	</listen-socket>
+	<mount>
+		<mount-name>/{{ party_id }}</mount-name>
+	</mount>
+	<paths>
+		<basedir>{{ party_home }}/{{ party_id }}/icecast2</basedir>
+		<logdir>{{ party_home }}/{{ party_id }}/icecast2/log</logdir>
+		<webroot>{{ party_home }}/{{ party_id }}/icecast2/web</webroot>
+		<adminroot>{{ party_home }}/{{ party_id }}/icecast2/admin</adminroot>
+		<pidfile>{{ party_home }}/{{ party_id }}/icecast2/icecast.pid</pidfile>
+		<alias source="/" dest="/status.xsl"/>
+	</paths>
+    <logging>
+        <accesslog>access.log</accesslog>
+        <errorlog>error.log</errorlog>
+        <loglevel>4</loglevel>
+        <logsize>10000</logsize>
+    </logging>
+    <security>
+        <chroot>0</chroot>
+        <changeowner>
+            <user>icecast</user>
+            <group>icecast</group>
+        </changeowner>
+    </security>
+</icecast>

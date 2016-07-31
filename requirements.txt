@@ -1,1 +1,4 @@
 pydub
+jinja2
+mpd
+python-mpd2
