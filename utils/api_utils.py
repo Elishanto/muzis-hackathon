@@ -44,4 +44,4 @@ def generate_audio(db, user_id):
 
     concatenated = concatenate_audio(res)
     concatenated.export('files/{}.mp3'.format(name), format='mp3')
-    return res, 'http://162.243.2.164/{}.mp3'.format(urllib.parse.quote(name))
+    return res, '{}/{}.mp3'.format(os.environ.get('server_url'), urllib.parse.quote(name))
