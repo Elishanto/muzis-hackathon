@@ -8,7 +8,7 @@ audio_url = 'http://f.muzis.ru/{name}'
 
 
 def concatenate_audio(songs_list, params=None):
-    # TODO: добавить параметры слкеивания
+    # TODO: добавить параметры склеивания
     """
     Склеиваем треки в один большой
     :param songs_list: [<Song>, ...]

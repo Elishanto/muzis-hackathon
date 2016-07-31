@@ -22,7 +22,7 @@ class Handlers:
             name = str(self.db.playlists.count() + 1)
 
         if self.db.playlists.find({'name': name}).count() > 0:
-            name = '{} #{}'.format(name, self.db.playlists.count({'name': name}) + 1)
+            name = '{} #{}'.format(self.get_plst_name().format(name), self.db.playlists.count({'name': name}) + 1)
 
         self.db.playlists.insert_one({'name': name, 'user_id': update.message.from_user.id})
         self.db.current.update_one({'user_id': update.message.from_user.id},
@@ -78,9 +78,14 @@ class Handlers:
                                        parse_mode='markdown')
         else:
             buttons = self.config['buttons'][data]
-            buttons = sorted(buttons.keys())
-            buttons = [[InlineKeyboardButton(text=x, callback_data='{}|{}'.format(data, x))]
-                       for x in buttons]
+            if data == 'l':
+                buttons = list(sorted(map(int, buttons.keys())))
+                buttons = [[InlineKeyboardButton(text=str(x), callback_data='{}|{}'.format(data, x))]
+                           for x in buttons]
+            else:
+                buttons = sorted(buttons.keys())
+                buttons = [[InlineKeyboardButton(text=x, callback_data='{}|{}'.format(data, x))]
+                           for x in buttons]
             return bot.editMessageText(chat_id=query.message.chat.id,
                                        message_id=message_id,
                                        text=self.get_plst_name().format(name) + get_playlist_params(self, name),
