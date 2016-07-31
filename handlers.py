@@ -32,8 +32,8 @@ class Handlers:
         )
 
     def callback_handler(self, bot, update):
-        def generate_desc(name):
-            text = 'Playlist "{}"'.format(name)
+        def generate_desc(a):
+            text = 'Playlist "{}"'.format(a)
             return text
         query = update.callback_query
         data = query.data
