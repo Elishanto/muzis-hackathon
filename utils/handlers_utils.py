@@ -6,3 +6,4 @@ def get_playlist_params(handler, plst_name):
     reversed_items = {k: {vv: kk for kk, vv in v.items()} for k, v in handler.config['buttons'].items()}
     return '\n'.join(['_{}: {}_'.format(names[k], reversed_items[k][v])
                       for k, v in text_json.items()])
+

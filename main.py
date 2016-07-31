@@ -31,6 +31,7 @@ def main():
 
     dp.add_handler(CommandHandler('start', handlers.start_handler))
     dp.add_handler(CommandHandler('create', handlers.create_handler, pass_args=True))
+    dp.add_handler(CommandHandler('history', handlers.history_handler, pass_args=True))
     dp.add_handler(CommandHandler('help', handlers.help_handler))
     dp.add_handler(CallbackQueryHandler(handlers.callback_handler))
 

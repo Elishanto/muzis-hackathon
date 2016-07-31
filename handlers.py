@@ -39,6 +39,20 @@ class Handlers:
             upsert=True
         )
 
+    def history_handler(self, bot, update, args):
+        if args[0] == '':
+            _args = [5]
+        else:
+            _args = args
+        history = self.db.playlists.find({'user_id': update.message.from_user.id}).limit(int(_args[0]))
+        text = ''
+        for plst in history:
+            text += self.get_plst_name().format(plst['name']) + get_playlist_params(self, plst['name']) + '\n\n'
+            print(text)
+        return bot.sendMessage(update.message.from_user.id,
+                               text=text,
+                               parse_mode='markdown')
+
     def help_handler(self, bot, update):
         return bot.sendMessage(update.message.from_user.id, text=self.config['help_message'])
 
@@ -59,7 +73,7 @@ class Handlers:
             text = '\n\n'.join([
                                    '\n'.join(['*{}*'.format(x['performer']), x['track_name']]) for x in res
                                    ])
-            text += '\n\n' + '_Download_: ' + audio_url
+            text += '\n\n' + '_Download_: [{}]({})'.format(name, audio_url)
             return bot.editMessageText(chat_id=query.message.chat.id,
                                        message_id=message_id,
                                        text=text,
