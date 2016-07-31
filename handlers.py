@@ -1,4 +1,5 @@
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
+
 from utils.api_utils import generate_audio
 from utils.handlers_utils import get_playlist_params
 
@@ -58,8 +59,8 @@ class Handlers:
             res, audio_url = generate_audio(self.db, query.from_user.id)
 
             text = '\n\n'.join([
-                '\n'.join(['*{}*'.format(x['performer']), x['track_name']]) for x in res
-            ])
+                                   '\n'.join(['*{}*'.format(x['performer']), x['track_name']]) for x in res
+                                   ])
             text += '\n\n' + '_Download_: ' + audio_url
             return bot.editMessageText(chat_id=query.message.chat.id,
                                        message_id=message_id,
@@ -79,8 +80,23 @@ class Handlers:
         else:
             buttons = self.config['buttons'][data]
             if data == 'l':
-                buttons = list(sorted(map(int, buttons.keys())))
-                buttons = [[InlineKeyboardButton(text=str(x), callback_data='{}|{}'.format(data, x))]
+                song_words = [k.split(' ')[1] for k in buttons.keys()]
+                buttons = sorted(int(x.split(' ')[0]) for x in buttons.keys())
+                buttons = [[
+                               InlineKeyboardButton(
+                                   text=' '.join([str(x), word]),
+                                   callback_data='{}|{}'.format(data, ' '.join([str(x), word])))
+                           ]
+                           for x, word in zip(buttons, song_words)
+                           ]
+
+            elif data == 'e':
+                buttons = sorted([int(ep.split('-')[0]) for ep in buttons.keys()])
+                buttons = [[
+                               InlineKeyboardButton(
+                                   text=str(x) + '-e',
+                                   callback_data='{}|{}'.format(data, str(x) + '-e'))
+                           ]
                            for x in buttons]
             else:
                 buttons = sorted(buttons.keys())
